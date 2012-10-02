@@ -12,4 +12,13 @@ use Doctrine\ORM\EntityRepository;
  */
 class VegetalRepository extends EntityRepository
 {
+    public function getAllVegetals()
+    {
+        $qb = $this->createQueryBuilder('v')
+               ->leftJoin('v.type', 't')
+               ->addSelect('t');
+
+    return $qb->getQuery()
+               ->getResult();
+    }
 }
