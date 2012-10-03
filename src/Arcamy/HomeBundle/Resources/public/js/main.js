@@ -4,9 +4,20 @@
 	//models
 	window.Vegetable = Backbone.Model.extend({
 		defaults:{
-	        "title":'default',
-			"desc":'default'
+	        "name":'',
+			"description":'',
+			"type":''
+		},
+		schema: {
+		        name: 'Text',
+				name: { validators: ['required'] },
+		        type: {type: 'Select', options: [{val:1, label: "Arbre"}, {val:2, label: "Plante"}]},
+				description: 'Text'
+		},
+		initialize : function() {
+			this.url = "http://localhost:8888/test-project/web/app_dev.php/vegetals/"+this.id+".json";
 		}
+			
 	});
 	
 	
@@ -41,18 +52,19 @@
             return this;
 	    },
 		remove: function(e) {
-			this.collection.remove($(e.target).attr("id"));
+			var currentID = $(e.target).attr("id");
+			console.log(currentID);
+			$("tr#row"+currentID).fadeOut('fast', function() {
+				this.collection.remove(currentID);
+			});
+			
 		}
 	});
 	
 	window.VegetableSheetView = Backbone.View.extend({
 		el: $("#container"),
-		//template : Handlebars.compile($('#templateLink').html()),
+	
 		template : _.template($('#templateVegetableSheet').html()),
-		
-		events: {
-			"click a.destroy" : "destroy"
-		},
 		
 	    initialize : function() {
             this.render();
@@ -62,10 +74,36 @@
             $(this.el).html(renderedContent);
             return this;
 	    },
-		destroy: function() {
+	});
+	
+	window.NewVegetableSheetFormView = Backbone.View.extend({
+		el: $("#container"),
+
+		template : _.template($('#templateFormVegetableSheet').html()),
+		
+		events: {
+			"click button#submit" : "submit"
+		},
+		
+	    initialize : function() {
+            this.render();
+	    },
+	    render : function() {
+            $(this.el).html(this.template());
+			var vegetable = new Vegetable();
+			this.form = new Backbone.Form({model: vegetable}).render();
+			$('#NewVegetableSheetForm').prepend(this.form.el);
+            return this;
+	    },
+		submit: function() {
+			console.log('new sheet form submitted');
+			if(!this.form.commit()) {
+				console.log('ok');
+			}
 			
 		}
 	});
+	
 	
 	
 	//routes
@@ -73,7 +111,8 @@
 		
 		routes: {
 			"": "home",
-			"vegetaux/:idVegetal": "getVegetableSheet"
+			"vegetaux/:idVegetal": "getVegetableSheet",
+			"nouvelle-fiche": "createNewVegetableSheet"
 		},
 		
 		home: function() {
@@ -82,11 +121,15 @@
 		},
 		
 		getVegetableSheet: function(idVegetal) {
-			var vegetables = new Vegetables();
-			vegetables.fetch({success: function(collection, response){
-				var vegetableView = new ListVegetablesView({collection: vegetables});
+			var vegetable = new Vegetable({id: idVegetal});
+			vegetable.fetch({success: function(){
+				console.log('view vegetable sheet succeed');
+				var vegetableView = new VegetableSheetView({model: vegetable});
 			}});
-			var vegetableSheetView = new VegetableSheetView({model: vegetables.get(idVegetal)});
+		},
+		createNewVegetableSheet: function() {
+			console.log('routed to "formulaire nouvelle fiche"');
+			var formView = new NewVegetableSheetFormView();
 		}
 		
 	});
