@@ -52,13 +52,18 @@
             return this;
 	    },
 		remove: function(e) {
-			this.collection.remove($(e.target).attr("id"));
+			var currentID = $(e.target).attr("id");
+			console.log(currentID);
+			$("tr#row"+currentID).fadeOut('fast', function() {
+				this.collection.remove(currentID);
+			});
+			
 		}
 	});
 	
 	window.VegetableSheetView = Backbone.View.extend({
 		el: $("#container"),
-		
+	
 		template : _.template($('#templateVegetableSheet').html()),
 		
 	    initialize : function() {
