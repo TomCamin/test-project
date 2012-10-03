@@ -61,7 +61,7 @@ class RestController extends Controller
         $vegetable->setName($request->get('name'));
         $vegetable->setDescription($request->get('description'));
         $vegetable->setType($type);
-        $vegetable->setCreatedAt(Date());
+        //$vegetable->setCreatedAt(time());
         
         $em->persist($vegetable);
         $em->flush();

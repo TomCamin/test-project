@@ -50,6 +50,10 @@ class Vegetal
     private $createdAt;
 
 
+    public function __construct() {
+        $this->createdAt = new \DateTime();
+    }
+
     /**
      * Get id
      *
