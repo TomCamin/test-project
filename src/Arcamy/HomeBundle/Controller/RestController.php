@@ -20,6 +20,24 @@ class RestController extends Controller
         return $view;
     } // "get_vegetals"    [GET] /vegetals
     
+    public function deleteVegetalAction($id)
+    {
+        $em = $this->getDoctrine()->getEntityManager();
+        $guest = $em->getRepository('HomeBundle:Vegetal')->find($id);
+
+        if (!$guest) {
+            throw $this->createNotFoundException('No guest found for id '.$id);
+        }
+
+        $em->remove($guest);
+        $em->flush();
+        
+        $view = View::create()  
+          ->setStatusCode(200);  
+        
+        return $view;
+    } // "delete_vegetal"    [GET] /vegetal/delete/{id}
+    
     public function getVegetalAction($id)
     {
         $vegetals = $this->getDoctrine()
