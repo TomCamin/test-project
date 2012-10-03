@@ -55,11 +55,11 @@ class RestController extends Controller
     public function postVegetalAction(Request $request)
     {       
         $em = $this->getDoctrine()->getEntityManager();
-        $type = $em->getRepository('HomeBundle:Type')->find($request->request->get('type'));
+        $type = $em->getRepository('HomeBundle:Type')->find($request->get('type'));
         
         $vegetable = new \Arcamy\HomeBundle\Entity\Vegetal();
-        $vegetable->setName($request->request->get('name'));
-        $vegetable->setDescription($request->request->get('description'));
+        $vegetable->setName($request->get('name'));
+        $vegetable->setDescription($request->get('description'));
         $vegetable->setType($type);
         $vegetable->setCreatedAt(Date());
         
