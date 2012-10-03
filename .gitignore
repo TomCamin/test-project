@@ -13,3 +13,8 @@ app/config/parameters.ini
 app/config/parameters.yml
 
 *.DS_Store
+
+# sass
+*/.sass-cache/*
+*.scssc
+*.sassc
