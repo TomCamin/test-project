@@ -18,7 +18,19 @@ class VegetalRepository extends EntityRepository
                ->leftJoin('v.type', 't')
                ->addSelect('t');
 
-    return $qb->getQuery()
+        return $qb->getQuery()
                ->getResult();
+    }
+    
+    public function getVegetalById($id)
+    {
+        $qb = $this->createQueryBuilder('v')
+               ->leftJoin('v.type', 't')
+               ->addSelect('t')
+                ->where('v.id = :id')
+                ->setParameter('id', $id);
+
+        return $qb->getQuery()
+               ->getOneOrNullResult();
     }
 }

@@ -9,7 +9,6 @@ class RestController extends Controller
 {
     public function getVegetalsAction()
     {
-        //$test_1 = array('id'=>'1', 'title'=>'Yeah', 'desc'=> 'jkdhsf');
         $vegetals = $this->getDoctrine()
                            ->getEntityManager()
                            ->getRepository('HomeBundle:Vegetal')
@@ -20,4 +19,17 @@ class RestController extends Controller
         
         return $view;
     } // "get_vegetals"    [GET] /vegetals
+    
+    public function getVegetalAction($id)
+    {
+        $vegetals = $this->getDoctrine()
+                           ->getEntityManager()
+                           ->getRepository('HomeBundle:Vegetal')
+                           ->getVegetalById($id);
+        $view = View::create()  
+          ->setStatusCode(200)  
+          ->setData($vegetals);  
+        
+        return $view;
+    } // "get_vegetal"    [GET] /vegetal/{id}
 }
