@@ -95,7 +95,7 @@ class RestController extends Controller
     } // "post_vegetal"    [POST] /vegetal
     
     /**
-     * @PUT("/vegetal")
+     * @PUT("/vegetal/{id}")
      * 
      */
     public function putVegetalAction(Request $request)
