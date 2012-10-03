@@ -72,6 +72,27 @@ class RestController extends Controller
         return $view;
     } // "new_vegetal"    [GET] /vegetal/new
     
+    public function putVegetalAction(Request $request)
+    {       
+        $em = $this->getDoctrine()->getEntityManager();
+        $vegetable = $em->getRepository('HomeBundle:Vegetal')->find($request->get('id'));
+        $type = $em->getRepository('HomeBundle:Type')->find($request->get('type'));
+        
+        $vegetable->setName($request->get('name'));
+        $vegetable->setDescription($request->get('description'));
+        $vegetable->setType($type);
+        //$vegetable->setCreatedAt(time());
+        
+        $em->persist($vegetable);
+        $em->flush();
+        
+        $view = View::create()  
+          ->setStatusCode(200);  
+        
+        return $view;
+    } // "put_vegetal"    [PUT] /vegetal/edit
+    
+    
     public function getTypesAction()
     {
         $em = $this->getDoctrine()->getEntityManager();
