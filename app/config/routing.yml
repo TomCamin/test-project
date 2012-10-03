@@ -4,6 +4,7 @@ home:
 
 vegetal:
     type:     rest
+    prefix:   /api
     resource: Arcamy\HomeBundle\Controller\RestController
 
 # Internal routing configuration to handle ESI
