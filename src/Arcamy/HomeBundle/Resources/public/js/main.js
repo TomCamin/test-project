@@ -43,7 +43,6 @@
 	    	_.bindAll(this, 'render');
 	    	this.collection.bind('change', this.render);
             this.collection.bind('add', this.render);
-            this.collection.bind('remove', this.render);
             this.render();
 	    },
 	    render : function() {
@@ -53,10 +52,10 @@
 	    },
 		remove: function(e) {
 			var currentID = $(e.target).attr("id");
-			console.log(currentID);
-			$("tr#row"+currentID).fadeOut('fast', function() {
-				this.collection.remove(currentID);
-			});
+			console.log("suppression de  la fiche "+currentID);
+			this.collection.get(currentID).destroy({success: function() {
+				$("tr#row"+currentID).fadeOut('fast');
+			}});
 			
 		}
 	});
