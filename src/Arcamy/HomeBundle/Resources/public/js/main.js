@@ -12,10 +12,16 @@
 		        name: 'Text',
 				name: { validators: ['required'] },
 		        type: {type: 'Select', options: [{val:1, label: "Arbre"}, {val:2, label: "Plante"}]},
-				description: 'Text'
+				description: 'Text',
+				description: { validators: ['required'] }
 		},
 		initialize : function() {
-			this.url = "http://localhost:8888/test-project/web/app_dev.php/vegetals/"+this.id+".json";
+			if (this.isNew()) {
+				this.url = "http://localhost:8888/test-project/web/app_dev.php/api/vegetal";
+			}
+			else {
+				this.url = "http://localhost:8888/test-project/web/app_dev.php/api/vegetal/"+this.id;
+			}
 		}
 			
 	});
@@ -24,7 +30,7 @@
 	//collections
 	window.Vegetables = Backbone.Collection.extend({
 		model: Vegetable,
-		url: "http://localhost:8888/test-project/app_dev.php/vegetals.json"
+		url: "http://localhost:8888/test-project/app_dev.php/api/vegetals"
 	});
 	
 	
@@ -81,7 +87,7 @@
 		template : _.template($('#templateFormVegetableSheet').html()),
 		
 		events: {
-			"click button#submit" : "submit"
+			"click button#submit" : "submit",
 		},
 		
 	    initialize : function() {
@@ -89,17 +95,53 @@
 	    },
 	    render : function() {
             $(this.el).html(this.template());
-			var vegetable = new Vegetable();
-			this.form = new Backbone.Form({model: vegetable}).render();
+			this.vegetable = new Vegetable();
+			this.form = new Backbone.Form({model: this.vegetable}).render();
 			$('#NewVegetableSheetForm').prepend(this.form.el);
             return this;
 	    },
 		submit: function() {
-			console.log('new sheet form submitted');
 			if(!this.form.commit()) {
-				console.log('ok');
+				this.vegetable.on("sync",this.confirm());
+				this.vegetable.save();
+				
 			}
-			
+		},
+		confirm: function() {
+			console.log('new sheet form submitted without errors');
+			$("#flash").fadeIn('fast');
+		}
+	});
+	
+	
+	window.EditVegetableSheetFormView = Backbone.View.extend({
+		el: $("#container"),
+
+		template : _.template($('#templateFormEditVegetableSheet').html()),
+		
+		events: {
+			"click button#submit" : "submit",
+		},
+		
+	    initialize : function() {
+            this.render();
+	    },
+	    render : function() {
+            $(this.el).html(this.template());
+			this.form = new Backbone.Form({model: this.model}).render();
+			$('#EditVegetableSheetForm').prepend(this.form.el);
+            return this;
+	    },
+		submit: function() {
+			if(!this.form.commit()) {
+				this.model.on("sync",this.confirm());
+				this.model.save();
+				
+			}
+		},
+		confirm: function() {
+			console.log('new sheet form submitted without errors');
+			$("#flash").fadeIn('fast');
 		}
 	});
 	
@@ -108,24 +150,36 @@
 	//routes
 	window.App = Backbone.Router.extend({
 		
+	    initialize : function() {
+           this.vegetables = new Vegetables(pageData);
+	    },
+		
 		routes: {
 			"": "home",
 			"vegetaux/:idVegetal": "getVegetableSheet",
+			"editer/:idVegetal": "editVegetable",
 			"nouvelle-fiche": "createNewVegetableSheet"
 		},
 		
 		home: function() {
-			var vegetables = new Vegetables(pageData);
-			var vegetableView = new ListVegetablesView({collection: vegetables});
+			var vegetableView = new ListVegetablesView({collection: this.vegetables});
 		},
 		
 		getVegetableSheet: function(idVegetal) {
-			var vegetable = new Vegetable({id: idVegetal});
-			vegetable.fetch({success: function(){
+			this.vegetables.get(idVegetal).fetch({success: function(model){
 				console.log('view vegetable sheet succeed');
-				var vegetableView = new VegetableSheetView({model: vegetable});
+				var vegetableView = new VegetableSheetView({model: model});
 			}});
 		},
+		
+		editVegetable: function(idVegetal) {
+			this.vegetables.get(idVegetal).fetch({success: function(model){
+				console.log('view edit form vegetable sheet succeed');
+				var vegetableView = new EditVegetableSheetFormView({model: model});
+			}});
+			
+		},
+		
 		createNewVegetableSheet: function() {
 			console.log('routed to "formulaire nouvelle fiche"');
 			var formView = new NewVegetableSheetFormView();
