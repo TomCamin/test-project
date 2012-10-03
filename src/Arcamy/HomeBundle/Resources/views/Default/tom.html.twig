@@ -1,5 +1,46 @@
-<ul>
-  {% for veg in vegetals %}
-    <li>{{ veg.name }} {{ veg.type.title }}</li>
-  {% endfor %}
-</ul>
+{% extends '::base.html.twig' %}
+
+
+{% block title %}
+	{{ parent() }} | Test Project
+{% endblock %}
+
+
+
+{% block body %}
+	
+	<script type="text/template" id="templateVegetables">
+			<% _.each(vegetables, function(vegetable) { %>
+		        <div id="<%= vegetable.id %>">
+					<a href="#vegetaux/<%= vegetable.id %>"><%= vegetable.title %></a>
+					<a href="#" id="<%= vegetable.id %>" class="remove">X</a>
+				</div>
+		      <% }); %>
+	</script>
+	
+	<script type="text/template" id="templateVegetableSheet">
+	        <div id="<%= vegetable.id %>">
+				<h1><%= vegetable.title %></h1>
+				<p><%= vegetable.desc %></p>
+			</div>
+	</script>
+	
+	<h1>Coucou</h1>
+	<div id="container">
+	
+	<script type="text/javascript">
+		var pageData = [];
+		{% for veg in vegetals %}
+			pageData.push({
+				"id" : "{{veg.id}}",
+				"name" : "{{ veg.name }}",
+				"title" : "{{ veg.type.title }}"
+			});
+		{% endfor %}
+	</script>
+		
+		
+	</div>
+	<div id="test"></div>
+	
+{% endblock %}
